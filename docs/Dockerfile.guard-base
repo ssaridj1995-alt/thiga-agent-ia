@@ -1,0 +1,33 @@
+FROM docker.io/library/python@sha256:0f086103b026048cc50cb5da25ec435c023c5241a83fc44daea593377abc61c4
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+COPY snapshot.sources /etc/apt/thiga-snapshot.sources
+COPY snapshot.conf /etc/apt/apt.conf.d/99thiga-snapshot
+COPY packages.lock /guard/provenance/packages.requested
+COPY build-inputs.sha256 /guard/provenance/build-inputs.sha256
+RUN set -eu; \
+    test "$(dpkg --print-architecture)" = amd64; \
+    test -s /usr/share/keyrings/debian-archive-keyring.gpg; \
+    apt-get -o Acquire::Retries=0 -o Acquire::https::Timeout=20 -o Acquire::https::AllowRedirect=false update; \
+    grep 'InRelease$' /guard/provenance/build-inputs.sha256 | sha256sum -c -; \
+    sha256sum /var/lib/apt/lists/*_InRelease > /guard/provenance/inrelease.sha256; \
+    sha256sum /usr/share/keyrings/debian-archive-keyring.gpg > /guard/provenance/keyring.sha256; \
+    apt-cache policy > /guard/provenance/apt-policy.txt; \
+    xargs -r apt-get --simulate --no-install-recommends --no-remove install \
+      < /guard/provenance/packages.requested > /guard/provenance/apt-resolution.txt; \
+    mkdir -p /tmp/thiga-build-archives; \
+    xargs -r apt-get -o Acquire::Retries=0 -o Acquire::https::Timeout=20 -o Acquire::https::AllowRedirect=false \
+      -o Dir::Cache::archives=/tmp/thiga-build-archives --download-only -y --no-install-recommends --no-remove install \
+      < /guard/provenance/packages.requested; \
+    test "$(find /tmp/thiga-build-archives -maxdepth 1 -name '*.deb' | wc -l)" -eq 8; \
+    grep '\.deb$' /guard/provenance/build-inputs.sha256 | sha256sum -c -; \
+    xargs -r apt-get -o Dir::Cache::archives=/tmp/thiga-build-archives --no-download -y --no-install-recommends --no-remove install \
+      < /guard/provenance/packages.requested; \
+    rm -rf /tmp/thiga-build-archives; \
+    while IFS='=' read -r package version; do \
+      test "$(dpkg-query -W -f='${Version}' "$package")" = "$version"; \
+    done < /guard/provenance/packages.requested; \
+    dpkg-query -W -f='${binary:Package}\t${Version}\n' | LC_ALL=C sort > /guard/provenance/dpkg-installed.tsv; \
+    rm -rf /var/lib/apt/lists/*
+WORKDIR /guard
+COPY guard.py heartbeat.py policy.nft /guard/
+ENTRYPOINT ["python", "-B", "/guard/guard.py"]

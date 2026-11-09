@@ -1,0 +1,26 @@
+table inet thiga_m17 {
+    chain input {
+        type filter hook input priority 0; policy drop;
+        ct state invalid counter drop
+        ct state established,related counter accept
+        tcp dport 8080 counter accept
+        counter drop
+    }
+
+    chain output {
+        type filter hook output priority 0; policy drop;
+        # Reject Docker's embedded DNS regardless of its translated port.
+        ip daddr 127.0.0.11 counter drop
+        ct state invalid counter drop
+        ct state established,related counter accept
+        ip daddr 127.0.0.1 tcp dport 8080 counter accept
+        ip daddr 10.217.76.20 tcp dport 11434 counter accept
+        ip daddr 10.217.76.30 tcp dport 8000 counter accept
+        counter drop
+    }
+
+    chain forward {
+        type filter hook forward priority 0; policy drop;
+        counter drop
+    }
+}

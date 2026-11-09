@@ -1,0 +1,5 @@
+127.0.0.1 localhost
+::1 localhost
+10.217.76.10 webui
+10.217.76.20 ollama
+10.217.76.30 mcp

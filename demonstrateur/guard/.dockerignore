@@ -1,0 +1,12 @@
+*
+!Dockerfile
+!snapshot.sources
+!snapshot.conf
+!packages.lock
+!guard.py
+!heartbeat.py
+!policy.nft
+!build-inputs.sha256
+!netlink.py
+!ruleset.py
+!policy.expected.json

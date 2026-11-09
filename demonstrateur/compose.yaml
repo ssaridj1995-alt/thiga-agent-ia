@@ -1,0 +1,204 @@
+name: thiga-corrige-20261109
+x-app: &app
+  image: thiga-corrige-20261109-app:local
+  pull_policy: never
+  read_only: true
+  privileged: false
+  cap_drop: [ALL]
+  security_opt: [no-new-privileges:true]
+  tmpfs: [/tmp]
+  mem_limit: 512m
+services:
+  init:
+    <<: *app
+    user: '0:0'
+    network_mode: none
+    cap_add: [CHOWN, FOWNER, DAC_OVERRIDE]
+    command: [python, -B, init_verify.py]
+    volumes: [admin:/admin, webkeys:/webkeys, mcpstate:/state, audit:/audit]
+  seed:
+    image: ollama/ollama:0.40.13@sha256:b2f0122c476bc9fe7ce679d8bb4bd555351e25e2554eefb156f61cb0a89cf429
+    entrypoint: [/bin/sh, /seed.sh]
+    volumes:
+      - models:/root/.ollama
+      - type: bind
+        source: ./seed.sh
+        target: /seed.sh
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: ./model
+        target: /model-reference
+        read_only: true
+        bind: {create_host_path: false}
+    networks: [distribution]
+    mem_limit: 1g
+    environment: {OLLAMA_NO_CLOUD: 'true'}
+    privileged: false
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+  webui-guard:
+    image: thiga-corrige-20261109-guard:local
+    pull_policy: never
+    build:
+      context: ./guard
+      network: none
+      additional_contexts:
+        guardbase: oci-layout://vendor/guard@sha256:031ab490c899c1633889b6a20d7f3d0cad7251ae1b4c7e39ad6f04539850beee
+      provenance: mode=min,version=v1
+    platform: linux/amd64
+    read_only: true
+    privileged: false
+    cap_drop: [ALL]
+    cap_add: [NET_ADMIN]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 64m
+    pids_limit: 32
+    volumes: [guard_status:/run/guard]
+    networks:
+      private: {ipv4_address: 10.217.76.10, aliases: [webui]}
+      frontend: {ipv4_address: 10.217.77.10, gw_priority: 1}
+    ports: ['127.0.0.1:3039:8080']
+    healthcheck:
+      test: [CMD, python, -B, /guard/guard.py, health]
+      interval: 2s
+      timeout: 2s
+      retries: 10
+    logging: {options: {max-size: 2m, max-file: '3'}}
+  ollama:
+    image: ollama/ollama:0.40.13@sha256:b2f0122c476bc9fe7ce679d8bb4bd555351e25e2554eefb156f61cb0a89cf429
+    depends_on: {seed: {condition: service_completed_successfully}}
+    privileged: false
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    environment:
+      OLLAMA_NO_CLOUD: 'true'
+      OLLAMA_NOPRUNE: 'true'
+      OLLAMA_HOST: 0.0.0.0:11434
+      OLLAMA_NUM_PARALLEL: '1'
+      OLLAMA_MAX_LOADED_MODELS: '1'
+      OLLAMA_CONTEXT_LENGTH: '8192'
+    volumes: [models:/root/.ollama]
+    networks: {private: {ipv4_address: 10.217.76.20}}
+    mem_limit: 12g
+    deploy:
+      resources:
+        reservations:
+          devices: [{driver: nvidia, count: 1, capabilities: [gpu]}]
+    healthcheck:
+      test: [CMD, ollama, list]
+      interval: 5s
+      timeout: 4s
+      retries: 30
+  webui:
+    image: ghcr.io/open-webui/open-webui@sha256:03443b8de6b617da9d900edd09b4bf1cb0ddbfdcba6afb42c548336a0b821ded
+    depends_on:
+      init: {condition: service_completed_successfully}
+      ollama: {condition: service_healthy}
+      webui-guard: {condition: service_healthy}
+    network_mode: service:webui-guard
+    privileged: false
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    entrypoint: [python, -B, /opt/thiga-guard/launch_guarded.py]
+    environment:
+      WEBUI_SECRET_KEY_FILE: /webkeys/key
+      WEBUI_ADMIN_EMAIL: admin-tech@thiga.example.com
+      WEBUI_ADMIN_NAME: Administrateur technique
+      ENABLE_SIGNUP: 'false'
+      WEBUI_AUTH: 'true'
+      ENABLE_TOOL_SERVERS: 'true'
+      ENABLE_OPENAI_API: 'false'
+      ENABLE_WEB_SEARCH: 'false'
+      ENABLE_CODE_INTERPRETER: 'false'
+      ENABLE_IMAGE_GENERATION: 'false'
+      ENABLE_OTEL: 'false'
+      ENABLE_OLLAMA_API: 'true'
+      OLLAMA_BASE_URL: http://ollama:11434
+      OFFLINE_MODE: 'true'
+      HF_HUB_OFFLINE: '1'
+      ENABLE_VERSION_UPDATE_CHECK: 'false'
+      RAG_EMBEDDING_MODEL: ''
+      RAG_RERANKING_MODEL: ''
+      GLOBAL_LOG_LEVEL: ERROR
+      UVICORN_LOG_LEVEL: error
+      CONTENT_SECURITY_POLICY: "default-src 'self'; connect-src 'self' ws://127.0.0.1:3039; img-src 'self' data: blob:; media-src 'self' blob:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'"
+    volumes:
+      - webui:/app/backend/data
+      - webkeys:/webkeys:ro
+      - type: bind
+        source: ./webui_patch/auth.py
+        target: /app/backend/open_webui/utils/auth.py
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: ./webui_patch/thiga_revocation.py
+        target: /app/backend/open_webui/utils/thiga_revocation.py
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: ./webui_patch/socket_main.py
+        target: /app/backend/open_webui/socket/main.py
+        read_only: true
+        bind: {create_host_path: false}
+      - guard_status:/guard-status:ro
+      - type: bind
+        source: ./guard/launch_guarded.py
+        target: /opt/thiga-guard/launch_guarded.py
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: ./guard/heartbeat.py
+        target: /opt/thiga-guard/heartbeat.py
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: ./guard/hosts
+        target: /etc/hosts
+        read_only: true
+        bind: {create_host_path: false}
+    mem_limit: 4g
+    healthcheck:
+      test: [CMD, python, -B, /opt/thiga-guard/launch_guarded.py, health]
+      interval: 5s
+      timeout: 4s
+      retries: 48
+      start_period: 20s
+  bootstrap:
+    <<: *app
+    networks: [private]
+    command: [python, -B, bootstrap.py]
+    depends_on: {webui: {condition: service_healthy}}
+    volumes: [admin:/admin, mcpstate:/state]
+  mcp:
+    <<: *app
+    build:
+      context: .
+      network: none
+      provenance: mode=min,version=v1
+      additional_contexts:
+        appbase: oci-layout://vendor/app@sha256:8eb881543db8aa2e93e48ec8134de151e79e24abfd20d7ac6d35a57c0ac66f10
+    networks: {private: {ipv4_address: 10.217.76.30}}
+    depends_on: {bootstrap: {condition: service_completed_successfully}}
+    volumes: ['mcpstate:/state:ro', audit:/audit]
+    healthcheck:
+      test: [CMD, python, -B, health.py]
+      interval: 5s
+      timeout: 4s
+      retries: 20
+networks:
+  private:
+    internal: true
+    ipam: {config: [{subnet: 10.217.76.0/24}]}
+  frontend:
+    ipam: {config: [{subnet: 10.217.77.0/24}]}
+  distribution:
+    ipam: {config: [{subnet: 10.217.78.0/24}]}
+volumes:
+  admin: {}
+  webkeys: {}
+  mcpstate: {}
+  audit: {}
+  models: {}
+  webui: {}
+  guard_status: {}

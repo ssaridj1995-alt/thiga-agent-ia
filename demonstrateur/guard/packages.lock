@@ -1,0 +1,7 @@
+nftables=1.0.6-2+deb12u2
+libnftables1=1.0.6-2+deb12u2
+libnftnl11=1.2.4-2
+libmnl0=1.0.4-3
+libjansson4=2.14-2
+libedit2=3.1-20221030-2
+libxtables12=1.8.9-2

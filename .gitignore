@@ -1,0 +1,13 @@
+*.zip
+*.env
+.env.*
+*.pem
+*.key
+*.log
+*.sqlite*
+*.db
+__pycache__/
+.venv/
+evidence/
+demonstrateur/vendor/app/
+demonstrateur/vendor/guard/

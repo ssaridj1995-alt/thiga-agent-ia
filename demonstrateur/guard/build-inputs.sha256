@@ -1,0 +1,11 @@
+77737fa4b34f2693e982cc9ee35736816c35a7778fc2d326cc1bbf5b301fe1aa  /var/lib/apt/lists/deb.debian.org_debian_dists_bookworm_InRelease
+72a46872526f1b12732c4c6b863e843648f380258c20be540f1fe3a8ac4bc5e7  /var/lib/apt/lists/deb.debian.org_debian_dists_bookworm-updates_InRelease
+5d916d253a3ed4b2413b355ac864adc2188295df58d3f569879e5322f50378bf  /var/lib/apt/lists/deb.debian.org_debian-security_dists_bookworm-security_InRelease
+bb31cc8b40f962a85b2cec970f7f79cc704a1ae4bad24257a822055404b2c60b  /tmp/thiga-build-archives/libbsd0_0.11.7-2_amd64.deb
+1cf14abf2716d3279db12d0657a5737cf70074a1e71d3bdf73206625e3c89ce6  /tmp/thiga-build-archives/libedit2_3.1-20221030-2_amd64.deb
+3fc9742f9f1a37bcb9931df6074b4d1483419ef832ad5349f47323e75fc27864  /tmp/thiga-build-archives/libjansson4_2.14-2_amd64.deb
+4581f42e3373cb72f9ea4e88163b17873afca614a6c6f54637e95aa75983ea7c  /tmp/thiga-build-archives/libmnl0_1.0.4-3_amd64.deb
+3a8223f9bfba99d97bf25296ac83de307ab036e1df63e5965f88809266851947  /tmp/thiga-build-archives/libnftables1_1.0.6-2+deb12u2_amd64.deb
+9e619e1470a1915264e906020f3bfc046fd8458043b1342686d997b5078213af  /tmp/thiga-build-archives/libnftnl11_1.2.4-2_amd64.deb
+cb841d66950a43af4a398625313d2f3da9065299c9738538de6c2c3495857040  /tmp/thiga-build-archives/libxtables12_1.8.9-2_amd64.deb
+966ff20ce58c17163a771c02ddbca264291408f94c512bd85dd18da0ebdbe88c  /tmp/thiga-build-archives/nftables_1.0.6-2+deb12u2_amd64.deb

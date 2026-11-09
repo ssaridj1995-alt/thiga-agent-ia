@@ -1,0 +1,277 @@
+{
+  "policy_sha256": "095fc347652e24fa5476f554586b42df2f2d8bc225221e3a56c7d9724b5f7567",
+  "filter": {
+    "input": {
+      "attributes": {
+        "type": "filter",
+        "hook": "input",
+        "prio": 0,
+        "policy": "drop"
+      },
+      "rules": [
+        [
+          {
+            "match": {
+              "op": "in",
+              "left": {
+                "ct": {
+                  "key": "state"
+                }
+              },
+              "right": 1
+            }
+          },
+          {
+            "counter": null
+          },
+          {
+            "drop": null
+          }
+        ],
+        [
+          {
+            "match": {
+              "op": "in",
+              "left": {
+                "ct": {
+                  "key": "state"
+                }
+              },
+              "right": [
+                2,
+                4
+              ]
+            }
+          },
+          {
+            "counter": null
+          },
+          {
+            "accept": null
+          }
+        ],
+        [
+          {
+            "match": {
+              "op": "==",
+              "left": {
+                "payload": {
+                  "protocol": "tcp",
+                  "field": "dport"
+                }
+              },
+              "right": 8080
+            }
+          },
+          {
+            "counter": null
+          },
+          {
+            "accept": null
+          }
+        ],
+        [
+          {
+            "counter": null
+          },
+          {
+            "drop": null
+          }
+        ]
+      ]
+    },
+    "output": {
+      "attributes": {
+        "type": "filter",
+        "hook": "output",
+        "prio": 0,
+        "policy": "drop"
+      },
+      "rules": [
+        [
+          {
+            "match": {
+              "op": "==",
+              "left": {
+                "payload": {
+                  "protocol": "ip",
+                  "field": "daddr"
+                }
+              },
+              "right": "127.0.0.11"
+            }
+          },
+          {
+            "counter": null
+          },
+          {
+            "drop": null
+          }
+        ],
+        [
+          {
+            "match": {
+              "op": "in",
+              "left": {
+                "ct": {
+                  "key": "state"
+                }
+              },
+              "right": 1
+            }
+          },
+          {
+            "counter": null
+          },
+          {
+            "drop": null
+          }
+        ],
+        [
+          {
+            "match": {
+              "op": "in",
+              "left": {
+                "ct": {
+                  "key": "state"
+                }
+              },
+              "right": [
+                2,
+                4
+              ]
+            }
+          },
+          {
+            "counter": null
+          },
+          {
+            "accept": null
+          }
+        ],
+        [
+          {
+            "match": {
+              "op": "==",
+              "left": {
+                "payload": {
+                  "protocol": "ip",
+                  "field": "daddr"
+                }
+              },
+              "right": "127.0.0.1"
+            }
+          },
+          {
+            "match": {
+              "op": "==",
+              "left": {
+                "payload": {
+                  "protocol": "tcp",
+                  "field": "dport"
+                }
+              },
+              "right": 8080
+            }
+          },
+          {
+            "counter": null
+          },
+          {
+            "accept": null
+          }
+        ],
+        [
+          {
+            "match": {
+              "op": "==",
+              "left": {
+                "payload": {
+                  "protocol": "ip",
+                  "field": "daddr"
+                }
+              },
+              "right": "10.217.76.20"
+            }
+          },
+          {
+            "match": {
+              "op": "==",
+              "left": {
+                "payload": {
+                  "protocol": "tcp",
+                  "field": "dport"
+                }
+              },
+              "right": 11434
+            }
+          },
+          {
+            "counter": null
+          },
+          {
+            "accept": null
+          }
+        ],
+        [
+          {
+            "match": {
+              "op": "==",
+              "left": {
+                "payload": {
+                  "protocol": "ip",
+                  "field": "daddr"
+                }
+              },
+              "right": "10.217.76.30"
+            }
+          },
+          {
+            "match": {
+              "op": "==",
+              "left": {
+                "payload": {
+                  "protocol": "tcp",
+                  "field": "dport"
+                }
+              },
+              "right": 8000
+            }
+          },
+          {
+            "counter": null
+          },
+          {
+            "accept": null
+          }
+        ],
+        [
+          {
+            "counter": null
+          },
+          {
+            "drop": null
+          }
+        ]
+      ]
+    },
+    "forward": {
+      "attributes": {
+        "type": "filter",
+        "hook": "forward",
+        "prio": 0,
+        "policy": "drop"
+      },
+      "rules": [
+        [
+          {
+            "counter": null
+          },
+          {
+            "drop": null
+          }
+        ]
+      ]
+    }
+  }
+}

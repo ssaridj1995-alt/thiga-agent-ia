@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1120" viewBox="0 0 1600 1120" role="img" aria-labelledby="title desc">
+<title id="title">THIGA — Architecture cible d'industrialisation Kubernetes (non déployée)</title>
+<desc id="desc">Architecture prospective: utilisateur, SSO OIDC et ingress TLS, WebUI, serveur MCP RH, Ollama sur GPU, données et audit, contrôles réseau, secrets et approvisionnement. Aucun cluster Kubernetes n'a été déployé ni testé.</desc>
+<defs>
+ <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#285368"/></marker>
+ <marker id="dasharrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#ad702e"/></marker>
+ <style>
+  text{font-family:Segoe UI,Arial,sans-serif;fill:#143142}
+  .title{font-size:36px;font-weight:700}.subtitle{font-size:18px;fill:#496271}
+  .zone{fill:#f6fafc;stroke:#6d93a5;stroke-width:2;stroke-dasharray:10 7}
+  .node{fill:#fff;stroke:#8ca9b5;stroke-width:2}.data{fill:#f4f8ef;stroke:#86a68c;stroke-width:2}
+  .control{fill:#fff7ed;stroke:#cd9e62;stroke-width:2}.head{font-size:21px;font-weight:700}.body{font-size:15px}.small{font-size:14px}.label{font-size:16px;font-weight:700;letter-spacing:.5px}
+  .flow{fill:none;stroke:#285368;stroke-width:3;marker-end:url(#arrow)}
+  .out{fill:none;stroke:#ad702e;stroke-width:2.6;stroke-dasharray:9 7;marker-end:url(#dasharrow)}
+ </style>
+</defs>
+<rect width="1600" height="1120" fill="#fff"/>
+<text class="title" x="48" y="64">THIGA | Industrialisation Kubernetes</text>
+<text class="subtitle" x="48" y="98">ARCHITECTURE CIBLE — PROPOSITION NON DÉPLOYÉE, NON TESTÉE ET NON QUALIFIÉE</text>
+<rect x="42" y="129" width="280" height="164" rx="18" class="node"/>
+<text x="63" y="159" class="label">ZONE UTILISATEUR</text>
+<text x="63" y="198" class="head">Navigateur interne</text>
+<text x="63" y="229" class="body">Collaborateur / manager</text>
+<text x="63" y="257" class="body">Session liée à l'identité</text>
+<rect x="358" y="129" width="310" height="164" rx="18" class="control"/>
+<text x="378" y="159" class="label">ACCÈS ET IDENTITÉ</text>
+<text x="378" y="198" class="head">IdP / SSO OIDC</text>
+<text x="378" y="229" class="body">Authentification, assertions</text>
+<text x="378" y="257" class="body">courtes / audience vérifiée</text>
+<path class="flow" d="M322 212 H352"/><text x="329" y="194" class="small">SSO</text>
+<rect x="710" y="129" width="842" height="798" rx="25" class="zone"/>
+<text x="738" y="164" class="label">CLUSTER KUBERNETES MANAGÉ — ZONE PRIVÉE / RÉGION ET OFFRE À VÉRIFIER</text>
+<rect x="745" y="195" width="354" height="113" rx="16" class="control"/>
+<text x="767" y="224" class="head">Ingress privé + TLS</text>
+<text x="767" y="251" class="body">Vérification OIDC et accès autorisé</text>
+<text x="767" y="276" class="body">Pas d'exposition de MCP / Ollama</text>
+<path class="flow" d="M668 212 H739"/><text x="675" y="196" class="small">TLS</text>
+<rect x="745" y="352" width="354" height="157" rx="16" class="node"/>
+<text x="767" y="383" class="label">POOL APPLICATIF</text>
+<text x="767" y="417" class="head">Open WebUI</text>
+<text x="767" y="447" class="body">Chat, session, orchestration MCP</text>
+<text x="767" y="476" class="body">État externalisé avant réplication</text>
+<path class="flow" d="M925 308 V346"/><text x="940" y="331" class="small">HTTPS interne</text>
+<rect x="1151" y="352" width="359" height="157" rx="16" class="node"/>
+<text x="1173" y="383" class="label">POOL GPU PRIVÉ</text>
+<text x="1173" y="417" class="head">Ollama + modèle local</text>
+<text x="1173" y="447" class="body">GPU NVIDIA / quotas / file bornée</text>
+<text x="1173" y="476" class="body">Service ClusterIP, sans LLM cloud</text>
+<path class="flow" d="M1099 429 H1145"/><text x="1110" y="412" class="small">API</text>
+<rect x="745" y="574" width="354" height="156" rx="16" class="node"/>
+<text x="767" y="606" class="label">SERVICE RH INTERNE</text>
+<text x="767" y="640" class="head">MCP Python (ClusterIP)</text>
+<text x="767" y="670" class="body">Validation identité et habilitations</text>
+<text x="767" y="699" class="body">Tenant, équipe, cible, champs, audit</text>
+<path class="flow" d="M922 509 V568"/><text x="938" y="547" class="small">MCP HTTP</text>
+<rect x="1151" y="574" width="359" height="156" rx="16" class="data"/>
+<text x="1173" y="606" class="label">DONNÉES ET ÉTAT</text>
+<text x="1173" y="640" class="head">Base RH / état applicatif</text>
+<text x="1173" y="670" class="body">Chiffrement, sauvegarde et restauration</text>
+<text x="1173" y="699" class="body">Séparation et minimisation des droits</text>
+<path class="flow" d="M1099 649 H1145"/><text x="1112" y="629" class="small">Lecture</text>
+<rect x="745" y="774" width="354" height="111" rx="16" class="control"/>
+<text x="767" y="803" class="head">Secrets &amp; identités de service</text>
+<text x="767" y="831" class="body">Gestionnaire / rotation / workload ID</text>
+<text x="767" y="856" class="body">Contrôles indépendants du LLM</text>
+<rect x="1151" y="774" width="359" height="111" rx="16" class="data"/>
+<text x="1173" y="803" class="head">Audit &amp; observabilité</text>
+<text x="1173" y="831" class="body">Journaux minimisés, traces corrélées</text>
+<text x="1173" y="856" class="body">Pannes, latence p95, alertes</text>
+<path class="out" d="M922 730 V768"/><path class="out" d="M1330 730 V768"/>
+<rect x="42" y="361" width="626" height="213" rx="18" class="control"/>
+<text x="64" y="395" class="label">FRONTIÈRES DE CONFIANCE ET SORTIES</text>
+<text x="64" y="430" class="body">CNI + NetworkPolicies : refus par défaut ingress / egress</text>
+<text x="64" y="460" class="body">DNS et destinations autorisés explicitement</text>
+<text x="64" y="490" class="body">Aucun accès direct public à Ollama, MCP ou aux bases</text>
+<text x="64" y="520" class="body">Contrôles à vérifier sur le CNI et le cluster exacts</text>
+<rect x="42" y="616" width="626" height="210" rx="18" class="control"/>
+<text x="64" y="650" class="label">APPROVISIONNEMENT ET SOUVERAINETÉ</text>
+<text x="64" y="685" class="body">Registre d'images / poids signés et vérifiés ; canal distinct</text>
+<text x="64" y="715" class="body">Candidat étudié : 3DS OUTSCALE OKS ; alternative OVHcloud</text>
+<text x="64" y="745" class="body">GPU, données, support, sous-traitants, SecNumCloud :</text>
+<text x="64" y="774" class="body">périmètre contractuel précis non vérifié pour cette cible</text>
+<rect x="42" y="957" width="1510" height="125" rx="18" fill="#f2f5f6" stroke="#ced9dc"/>
+<text x="64" y="994" class="label">ÉTAPES DE VALIDATION AVANT DONNÉES RH RÉELLES</text>
+<text x="64" y="1027" class="body">1. Pilote fictif + tests réseau/identité  ·  2. Tests GPU/concurrence/reprise  ·  3. Revue DPO, RGPD et AI Act</text>
+<text x="64" y="1056" class="body">Schéma conceptuel : ne représente ni cluster existant, ni offre qualifiée dans son ensemble, ni garantie de haute disponibilité.</text>
+</svg>

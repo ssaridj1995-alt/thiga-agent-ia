@@ -21,6 +21,9 @@ Démonstrateur d’un assistant RH qui recherche un salarié fictif et consulte 
 
 Voir [les flux et les autorisations](docs/ARCHITECTURE.md), [la provenance des dépendances](docs/BUILD.md) et [la trajectoire de mise en production](docs/PRODUCTION.md).
 
+**Décisions détaillées :** [20 dossiers d'arbitrage et leurs compromis](docs/DECISIONS.md) · [catalogue des 173 unités documentaires](docs/decisions/CATALOGUE-COMPLET.md).  
+**Second schéma :** [architecture cible d'industrialisation avec Kubernetes — proposition non déployée](docs/ARCHITECTURE-CIBLE-KUBERNETES.md).
+
 ## Installation pour les destinataires du paquet de remise
 
 **Le dépôt public contient les sources. Il faut disposer du ZIP technique remis au jury pour reconstruire les images de cette version.** Les deux bases OCI exactes sont dans ce ZIP. Le dépôt conserve les recettes et les digests. La redistribution publique des bases n’a pas été validée.

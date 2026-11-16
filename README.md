@@ -1,10 +1,44 @@
 # THIGA · Agent RH local
 
-Démonstrateur d’un assistant RH qui recherche un salarié fictif et consulte son solde de congés. Le cas montre une distinction importante : retrouver un nom dans l’annuaire de son entreprise ne donne pas accès à son solde.
+Ce projet est un **démonstrateur local d'assistant RH conversationnel**, sur des données entièrement fictives. Une personne formule sa demande en langage naturel ; le modèle Qwen, exécuté localement, peut proposer une recherche d'employé ou une consultation de solde via deux outils MCP en lecture seule. **L'autorisation n'est jamais décidée par le modèle** : le serveur RH retrouve l'identité de la session, limite l'annuaire à l'entreprise concernée, puis vérifie séparément les droits d'accès au solde. L'objectif est de montrer pourquoi **pouvoir retrouver un collègue ne signifie pas pouvoir lire ses congés**.
 
-- **Marc → Alice** · Le solde fictif de **12 jours** provient de l’outil RH.
-- **Marc → Claire** · L’annuaire peut trouver Claire. Le serveur refuse le solde, car elle ne relève pas de Marc.
-- **Bob → Alice** · Le serveur refuse l’accès entre deux entreprises.
+### Cas métier : deux entreprises, cinq salariés fictifs
+
+Le scénario oppose deux entreprises isolées (ou *tenants*). Dans l'entreprise A, Marc encadre directement Alice et Léa, tandis que Claire appartient au service finance, hors de son équipe. Bob appartient à l'entreprise B. Les cinq personnes existent dans les données RH synthétiques ; **Marc, Alice et Bob** disposent de comptes utilisateurs WebUI pour les essais du démonstrateur.
+
+```mermaid
+flowchart LR
+    subgraph A["Entreprise A · tenant A"]
+        direction TB
+        MARC["Marc<br/>Manager produit"]
+        ALICE["Alice<br/>Équipe produit"]
+        LEA["Léa<br/>Équipe produit"]
+        CLAIRE["Claire<br/>Finance · hors équipe"]
+    end
+    subgraph B["Entreprise B · tenant B"]
+        direction TB
+        BOB["Bob<br/>Consultant"]
+    end
+
+    MARC -->|"Solde autorisé : manager direct"| ALICE
+    MARC -->|"Solde autorisé : manager direct"| LEA
+    MARC -.->|"Solde refusé : hors équipe"| CLAIRE
+    BOB -.->|"Solde refusé : autre entreprise"| ALICE
+```
+
+**Lecture des flèches :** de la personne qui demande vers celle dont elle souhaite consulter le **solde de congés**. Les flèches continues illustrent des accès autorisés ; les pointillées, des refus. Chaque personne peut aussi consulter **son propre solde** (non dessiné pour éviter les boucles). Le diagramme montre les relations déterminantes ; la matrice ci-dessous couvre toutes les combinaisons d'acteur et de cible.
+
+| Demandeur ↓ / Cible → | Marc | Alice | Léa | Claire | Bob |
+|---|:---:|:---:|:---:|:---:|:---:|
+| **Marc** | R + S | R + S | R + S | R | — |
+| **Alice** | R | R + S | R | R | — |
+| **Léa** | R | R | R + S | R | — |
+| **Claire** | R | R | R | R + S | — |
+| **Bob** | — | — | — | — | R + S |
+
+**R** = recherche exacte de la personne dans l'annuaire professionnel de la même entreprise (attributs limités, **sans solde**). **S** = consultation de son solde via MCP, autorisée pour soi-même ou un subordonné direct. **—** = cible extérieure à l'entreprise : ni résultat d'annuaire ni accès au solde. La matrice décrit **la politique implémentée dans le code**, pas 25 parcours de bout en bout validés indépendamment.
+
+**Trois parcours représentatifs qualifiés :** Marc → Alice renvoie **12 jours** via MCP ; Marc → Claire est refusé malgré sa présence dans l'annuaire ; Bob → Alice est refusé à la frontière entre entreprises. Un refus côté MCP n'implique pas que le modèle choisira toujours correctement l'outil ou la cible. Voir [le code des règles RH](demonstrateur/fixtures.py), [les flux d'identité](docs/ARCHITECTURE.md) et [la portée des tests](docs/QUALIFICATION.md).
 
 ## Architecture
 

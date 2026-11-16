@@ -80,4 +80,18 @@ Le démarrage Compose de la version scellée a réussi en **167,266 s** sur volu
 
 ## Assistance IA et composants tiers
 
-Codex a assisté l’intégration, la remédiation, les essais automatisés et la documentation. Les données RH sont synthétiques. Open WebUI, Ollama, le SDK MCP, Python, Debian et Qwen sont crédités dans [les notices](THIRD-PARTY-NOTICES.md). La publication ne déclare pas de licence globale pour le code du projet.
+### Conception, pilotage et arbitrages
+
+Ce démonstrateur a été mené comme un **projet de conception, d'intégration et de qualification d'un système IA local**, et non comme une simple démonstration d'interface conversationnelle. Le travail de l'auteur a notamment porté sur le cadrage du cas RH, la définition des acteurs et des habilitations, l'analyse des risques, les choix d'architecture, la comparaison des solutions, la priorisation des remédiations et l'évaluation critique des résultats. Les décisions ont été confrontées à leurs compromis et aux preuves disponibles, y compris lorsque des essais se sont soldés par des échecs ou des résultats partiels.
+
+Parmi les choix structurants : séparation de l'identité authentifiée et de la cible demandée ; autorisations déterministes dans MCP plutôt que dans le LLM ; intégration MCP native ; inférence locale ; confinement réseau dédié ; gestion des états et de la révocation ; versionnement et vérification des dépendances ; démarrage Compose ; qualification sur parcours autorisés, interdits et adversariaux. Le [registre des décisions](docs/DECISIONS.md) documente les alternatives, motivations et limites de ces arbitrages. Les [résultats de qualification](docs/QUALIFICATION.md) distinguent les constats bornés des points encore partiels.
+
+### Usage de l'assistance IA
+
+**ChatGPT et Codex ont constitué des moyens de travail importants** pour explorer des options, challenger des hypothèses, assister la rédaction de spécifications, produire et modifier du code, préparer les essais, analyser les anomalies et structurer la documentation. Certaines implémentations et remédiations ont été réalisées avec une assistance IA substantielle ; le projet ne revendique donc pas une écriture intégralement manuelle de ses sources.
+
+L'auteur a assuré le **pilotage du périmètre, des priorités et des arbitrages**, ainsi que la revue des propositions et l'acceptation ou le rejet des résultats à la lumière des essais disponibles. Une proposition ou une analyse émise par une IA n'était pas, à elle seule, considérée comme une preuve de fonctionnement. Les tests mentionnés sont ceux consignés dans la qualification de la livraison corrigée : **aucune campagne Docker nouvelle n'a été exécutée pour la publication GitHub ni pour cette révision documentaire**.
+
+### Composants et licences
+
+**Open WebUI**, **Ollama**, **Qwen**, le **SDK Python MCP**, **Python** et **Debian** sont des technologies tierces : leur utilisation ou adaptation ne constitue pas une revendication de création de ces composants. Les crédits, versions et licences identifiés figurent dans les [notices de composants tiers](THIRD-PARTY-NOTICES.md). Les fichiers dérivés d'Open WebUI y sont explicitement signalés. Les données RH sont synthétiques. **Aucune licence globale n'est déclarée pour les sources propres au projet** ; l'absence d'une telle déclaration ne vaut pas permission générale de réutilisation.

@@ -88,9 +88,7 @@ Parmi les choix structurants : séparation de l'identité authentifiée et de la
 
 ### Usage de l'assistance IA
 
-**ChatGPT et Codex ont constitué des moyens de travail importants** pour explorer des options, challenger des hypothèses, assister la rédaction de spécifications, produire et modifier du code, préparer les essais, analyser les anomalies et structurer la documentation. Certaines implémentations et remédiations ont été réalisées avec une assistance IA substantielle ; le projet ne revendique donc pas une écriture intégralement manuelle de ses sources.
-
-L'auteur a assuré le **pilotage du périmètre, des priorités et des arbitrages**, ainsi que la revue des propositions et l'acceptation ou le rejet des résultats à la lumière des essais disponibles. Une proposition ou une analyse émise par une IA n'était pas, à elle seule, considérée comme une preuve de fonctionnement. Les tests mentionnés sont ceux consignés dans la qualification de la livraison corrigée : **aucune campagne Docker nouvelle n'a été exécutée pour la publication GitHub ni pour cette révision documentaire**.
+Codex a assisté l’intégration, la remédiation, les essais automatisés et la documentation.
 
 ### Composants et licences
 
